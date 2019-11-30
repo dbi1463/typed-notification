@@ -1,0 +1,39 @@
+os: osx
+language: swift
+
+if: tag IS blank # ignore the tag created event
+
+env:
+  global:
+  - SWIFT_BRANCH=swift-5.1.2-release
+  - SWIFT_VERSION=swift-5.1.2-RELEASE
+  - PACKAGE_VERSION=0.0.1
+  - secure: a+Jo7K81jtOCAkpVwf0WbboPu6cLpvCjWq0eg3tRW10YwpaAZblCPcn/jWIbjvXpXu9OJlJZf08PUdojBomlox9zEwgakLluhM54zZ2rpIvUDScBd3TJl+vMMf9wePG2pnCp82BXcCHcqp9JGoj+LqFtKjsECTIBmfZAkv98H469jEYLhF0IpOeuG4irVFJHthCrcVFBcOeJd4l6nrqVpDvwSWE0VFEnD19kt/6Lv3IAftHaqgX5RRibM/HfugfglaJ+svUAxgrQPBwpPWPNa4QxDPxsAyVbHyDme7s5VczOGmygds2qbEJaYsiRAc7DQMzB6yFvppsePt3L/4AgZ3X0iDScEBLG7VP55khtNXqyuc8qA9g6866wYsCrj9uqO40kAlCWCZwT7u0bODOiYYOEGNIQSrnX9bOJQaHRsyn7qyDaR2nOwnz70FNp7ijUcG3XDCnIP+moTVdC7M3iWiaNlVKMoe/4srK+8UhKAetWYly2ZTotEF+ctVVDzoL0jaBWpDz2t/soEPR0OuAozPLG1eWDeSS+zLv128m03tOmjA+0+7bZmJC4cljiI/EiKrLBYsIzZgdIboYRwrrdnBeZotNF3xLHZhzhH1e1p/VJjFMYTIPIeTUMDqRORgG5j+1W+DEUHmY8M1VqdgWfigbZrTN9F1OqaVTFw9nXYpI=
+
+jobs:
+  include:
+    - stage: test
+      os: osx
+      osx_image: xcode11.2
+      language: swift
+      install:
+        - wget https://swift.org/builds/$SWIFT_BRANCH/xcode/$SWIFT_VERSION/$SWIFT_VERSION-osx.pkg
+        - sudo installer -pkg $SWIFT_VERSION-osx.pkg -target /
+        - export PATH="/Library/Developer/Toolchains/$SWIFT_VERSION.xctoolchain/usr/bin:$PATH"
+      script:
+        - swift package update
+        - swift test --enable-code-coverage
+    - stage: release-beta
+      script:
+        - git config --global user.email "dbi1463@gmail.com"
+        - git config --global user.name "Spirit Tu"
+        - git tag $PACKAGE_VERSION-beta
+        - git push --quiet https://$GH_TOKEN@github.com/dbi1463/typed-notification --tag > /dev/null 2>&1
+      if: branch=develop
+    - stage: release
+      script:
+        - git config --global user.email "dbi1463@gmail.com"
+        - git config --global user.name "Spirit Tu"
+        - git tag $PACKAGE_VERSION-beta
+        - git push --quiet https://$GH_TOKEN@github.com/dbi1463/typed-notification --tag > /dev/null 2>&1
+      if: branch=master
