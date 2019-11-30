@@ -12,28 +12,31 @@ env:
 
 jobs:
   include:
-    - stage: test
-      os: osx
-      osx_image: xcode11.2
-      language: swift
-      install:
-        - wget https://swift.org/builds/$SWIFT_BRANCH/xcode/$SWIFT_VERSION/$SWIFT_VERSION-osx.pkg
-        - sudo installer -pkg $SWIFT_VERSION-osx.pkg -target /
-        - export PATH="/Library/Developer/Toolchains/$SWIFT_VERSION.xctoolchain/usr/bin:$PATH"
-      script:
-        - swift package update
-        - swift test --enable-code-coverage
-    - stage: release-beta
-      script:
-        - git config --global user.email "dbi1463@gmail.com"
-        - git config --global user.name "Spirit Tu"
-        - git tag $PACKAGE_VERSION-beta
-        - git push --quiet https://$GH_TOKEN@github.com/dbi1463/typed-notification --tag > /dev/null 2>&1
-      if: branch = develop AND type = push
-    - stage: release
-      script:
-        - git config --global user.email "dbi1463@gmail.com"
-        - git config --global user.name "Spirit Tu"
-        - git tag $PACKAGE_VERSION-beta
-        - git push --quiet https://$GH_TOKEN@github.com/dbi1463/typed-notification --tag > /dev/null 2>&1
-      if: branch = master AND type = push
+  - stage: test
+    os: osx
+    osx_image: xcode11.2
+    language: swift
+    install:
+    - wget https://swift.org/builds/$SWIFT_BRANCH/xcode/$SWIFT_VERSION/$SWIFT_VERSION-osx.pkg
+    - sudo installer -pkg $SWIFT_VERSION-osx.pkg -target /
+    - export PATH="/Library/Developer/Toolchains/$SWIFT_VERSION.xctoolchain/usr/bin:$PATH"
+    script:
+    - swift package update
+    - swift test --enable-code-coverage 
+    after_success:
+    - cp .build/x86_64-apple-macosx/debug/codecov/* .
+    - bash <(curl -s https://codecov.io/bash) -f default.profdata
+  - stage: release-beta
+    script:
+    - git config --global user.email "dbi1463@gmail.com"
+    - git config --global user.name "Spirit Tu"
+    - git tag $PACKAGE_VERSION-beta-$TRAVIS_BUILD_NUMBER
+    - git push --quiet https://$GH_TOKEN@github.com/dbi1463/typed-notification --tag > /dev/null 2>&1
+    if: branch = develop AND type = push
+  - stage: release
+    script:
+    - git config --global user.email "dbi1463@gmail.com"
+    - git config --global user.name "Spirit Tu"
+    - git tag $PACKAGE_VERSION
+    - git push --quiet https://$GH_TOKEN@github.com/dbi1463/typed-notification --tag > /dev/null 2>&1
+    if: branch = master AND type = push
