@@ -24,8 +24,7 @@ jobs:
     - swift package update
     - swift test --enable-code-coverage 
     after_success:
-    - cp .build/x86_64-apple-macosx/debug/codecov/* .
-    - bash <(curl -s https://codecov.io/bash) -f default.profdata
+    - bash <(curl -s https://codecov.io/bash) -f .build/x86_64-apple-macosx/debug/codecov/TypedNotification.json
   - stage: release-beta
     script:
     - git config --global user.email "dbi1463@gmail.com"
