@@ -55,89 +55,30 @@ extension KeyboardInfo {
     }
 }
 
-public typealias KeyboardInfoHandler = (KeyboardInfo) -> ()
+fileprivate func wrap(_ name: Notification.Name) -> TypedNotification<KeyboardInfo> {
+    return TypedNotification<KeyboardInfo>(name: name) { .from($0) }
+}
 
 /// Define the keyboard notifications.
-public enum KeyboardNotifications {
+public struct KeyboardNotifications {
 
     /// Posted immediately prior to the display of the keyboard.
-    case willShow
+    static let willShow = wrap(UIResponder.keyboardWillShowNotification)
 
     /// Posted immediately prior to the dismissal of the keyboard.
-    case willHide
+    static let  willHide = wrap(UIResponder.keyboardWillHideNotification)
 
     /// Posted immediately prior to a change in the keyboard’s frame.
-    case willChange
+    static let  willChange = wrap(UIResponder.keyboardWillChangeFrameNotification)
 
     /// Posted immediately after the display of the keyboard.
-    case didShow
+    static let  didShow = wrap(UIResponder.keyboardDidShowNotification)
 
     /// Posted immediately after the dismissal of the keyboard.
-    case didHide
+    static let  didHide = wrap(UIResponder.keyboardDidHideNotification)
 
     /// Posted immediately after a change in the keyboard’s frame.
-    case didChange
-}
-
-extension KeyboardNotifications: RawRepresentable {
-
-    public typealias RawValue = Notification.Name
-
-    public init?(rawValue: Notification.Name) {
-        switch rawValue {
-        case UIResponder.keyboardWillShowNotification:
-            self = .willShow
-        case UIResponder.keyboardWillHideNotification:
-            self = .willHide
-        case UIResponder.keyboardWillChangeFrameNotification:
-            self = .willChange
-        case UIResponder.keyboardDidShowNotification:
-            self = .didShow
-        case UIResponder.keyboardDidHideNotification:
-            self = .didHide
-        case UIResponder.keyboardDidChangeFrameNotification:
-            self = .didChange
-        default:
-            return nil
-        }
-    }
-
-    public var rawValue: Notification.Name {
-        switch self {
-        case .willShow:
-            return UIResponder.keyboardWillShowNotification
-        case .didShow:
-            return UIResponder.keyboardDidShowNotification
-        case .willChange:
-            return UIResponder.keyboardWillChangeFrameNotification
-        case .willHide:
-            return UIResponder.keyboardWillHideNotification
-        case .didHide:
-            return UIResponder.keyboardDidHideNotification
-        case .didChange:
-            return UIResponder.keyboardDidChangeFrameNotification
-        }
-    }
-}
-
-extension KeyboardNotifications {
-
-    /// Subscribe with a handler to recive the notification.
-    ///
-    /// - Parameter left: the notification to subscribe
-    /// - Parameter right: the handler to receive the notification
-    /// - Returns: the subscription, a disposable object and make its life-cycle be same as the handler
-    static func + (left: KeyboardNotifications, right: @escaping KeyboardInfoHandler) -> Subscription {
-        let observer = NotificationCenter.default.addObserver(forName: left.rawValue, object: nil, queue: .main) { notification in
-            guard let info: KeyboardInfo = .from(notification) else {
-                return
-            }
-            right(info)
-        }
-        return Subscription {
-            NotificationCenter.default.removeObserver(observer)
-        }
-    }
+    static let  didChange = wrap(UIResponder.keyboardDidChangeFrameNotification)
 }
 
 #endif

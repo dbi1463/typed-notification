@@ -44,7 +44,7 @@ let subscription = Notifications.keyboard.willShow + { [weak self] info in
 }
 ```
 
-The register handler will be invoked before the keyboard trying to show, and the information has been decoded as `KeyboardInfo` and pass to the handler. Note that the returned `subscription` should be kept, and in the closure, to access `self`, remember to add `[weak self]` to avoid reference cycle.
+The registered handler will be invoked before the keyboard trying to show, and the information has been decoded as `KeyboardInfo` and pass to the handler. Note that the returned `subscription` should be kept, and in the closure, to access `self`, remember to add `[weak self]` to avoid reference cycle.
 
 ### Remove the observer
 
