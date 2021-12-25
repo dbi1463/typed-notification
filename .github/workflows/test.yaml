@@ -6,7 +6,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Update dependency
+      - name: Resolve Dependency
         run: swift package update
       - name: Test
         run: swift test --enable-code-coverage
+      - name: Covert Code Coverage
+        run: xcrun llvm-cov export -format=lcov .build/debug/TypedNotificationPackageTests.xctest/Contents/MacOS/TypedNotificationPackageTests -instr-profile=.build/debug/codecov/default.profdata > lcov.info
+      - name: Upload Codecov
+        uses: codecov/codecov-action@v2
