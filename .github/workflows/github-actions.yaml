@@ -1,0 +1,11 @@
+name: Run tests
+on: [push]
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Update dependency
+        run: swift package update
+      - name: Test
+        run: swift test --enable-code-coverage
