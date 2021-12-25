@@ -1,5 +1,5 @@
 # TypedNotification
-[![Build Status](https://travis-ci.org/dbi1463/typed-notification.svg?branch=develop)](https://travis-ci.org/dbi1463/typed-notification)<!--[![codecov](https://codecov.io/gh/dbi1463/typed-notification/branch/develop/graph/badge.svg)](https://codecov.io/gh/dbi1463/typed-notification)-->
+![build](https://github.com/github/docs/actions/workflows/test.yml/badge.svg?branch=develop)
 [![Swift Package Manager](https://img.shields.io/badge/SwiftPM-Compatiable-brightgreen.svg)](https://swift.org/package-manager/)
 [![release](https://img.shields.io/github/release/dbi1463/typed-notification/all.svg)](https://github.com/dbi1463/typed-notification/releases)
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
@@ -44,7 +44,7 @@ let subscription = Notifications.keyboard.willShow + { [weak self] info in
 }
 ```
 
-The register handler will be invoked before the keyboard trying to show, and the information has been decoded as `KeyboardInfo` and pass to the handler. Note that the returned `subscription` should be kept, and in the closure, to access `self`, remember to add `[weak self]` to avoid reference cycle.
+The registered handler will be invoked before the keyboard trying to show, and the information has been decoded as `KeyboardInfo` and pass to the handler. Note that the returned `subscription` should be kept, and in the closure, to access `self`, remember to add `[weak self]` to avoid reference cycle.
 
 ### Remove the observer
 

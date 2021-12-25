@@ -1,0 +1,15 @@
+name: Beta Release
+on:
+  push:
+    tags:
+      - "v*.*.*-beta"
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          prerelease: true
