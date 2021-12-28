@@ -2,15 +2,35 @@ name: Run tests
 on: [push]
 jobs:
   test:
-    runs-on: macos-latest
+    runs-on: macos-11
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Resolve Dependency
         run: swift package update
+      - name: Generate Xcode Project
+        run: swift package generate-xcodeproj
       - name: Test
-        run: swift test --enable-code-coverage
-      - name: Covert Code Coverage
-        run: xcrun llvm-cov export -format=lcov .build/debug/TypedNotificationPackageTests.xctest/Contents/MacOS/TypedNotificationPackageTests -instr-profile=.build/debug/codecov/default.profdata > lcov.info
+        uses: sersoft-gmbh/xcodebuild-action@v1
+        with:
+          project: ./TypedNotification.xcodeproj
+          scheme: TypedNotification-Package
+          derived-data-path: ./output
+          destination: "OS=15.0,name=iPhone 13 Mini"
+          result-bundle-path: coverage/result.xcresult
+          action: clean build test
+          enable-code-coverage: true
+          build-settings: ENABLE_TESTING_SEARCH_PATHS=YES CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+      - name: Archive Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          path: ./output
+      - name: Convert Coverage Report to JSON
+        run: xcrun xccov view --report --json coverage/result.xcresult > cov.json
+      - name: Convert JSON Coverage Report to LCOV
+        run: swift run xccov2lcov cov.json > coverage.lcov
       - name: Upload Codecov
         uses: codecov/codecov-action@v2
+        with:
+          directory: ./output/Build
+          verbose: true

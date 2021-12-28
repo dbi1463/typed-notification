@@ -3,6 +3,7 @@
 [![Swift Package Manager](https://img.shields.io/badge/SwiftPM-Compatiable-brightgreen.svg)](https://swift.org/package-manager/)
 [![release](https://img.shields.io/github/release/dbi1463/typed-notification/all.svg)](https://github.com/dbi1463/typed-notification/releases)
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
+[![codecov](https://codecov.io/gh/dbi1463/typed-notification/branch/develop/graph/badge.svg?token=5hEk4BfOif)](https://codecov.io/gh/dbi1463/typed-notification)
 
 A type-safe way to receive notifications.
 
